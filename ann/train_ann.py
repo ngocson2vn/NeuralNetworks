@@ -17,7 +17,7 @@ ground_truth_dataset = [
 
 n = NeuralNetwork()
 
-stats = n.train(ground_truth_dataset, 100000, 0.001)
+stats = n.train(ground_truth_dataset, 100001, 0.001)
 epochs = stats[0]
 min_losses = stats[1]
 avg_losses = stats[2]

@@ -15,6 +15,17 @@ if x[0] < 0 or x[1] < 0:
 
 with open("model.bin", "rb") as model:
   n = pickle.load(model)
+  print("""Hyperparameters:
+n.w1 = {}
+n.w2 = {}
+n.w3 = {}
+n.w4 = {}
+n.w5 = {}
+n.w6 = {}
+n.b1 = {}
+n.b2 = {}
+n.b3 = {}
+""".format(n.w1, n.w2, n.w3, n.w4, n.w5, n.w6, n.b1, n.b2, n.b3))
   p = n.feedforward(x)
   percent = int(p * 100)
   if percent >= 50:

@@ -28,7 +28,7 @@ n.b1 = -0.83347780239002
 n.b2 = 0.27420776870407937
 n.b3 = 0.6237767133439941
 
-stats = n.train(ground_truth_dataset, 100000, 0.001)
+stats = n.train(ground_truth_dataset, 500001, 0.001)
 epochs = stats[0]
 min_losses = stats[1]
 avg_losses = stats[2]
