@@ -56,7 +56,7 @@ class Convolution3D:
 
     C2 = np.zeros((M, C2_height, C2_height), dtype=np.float64)
     dC2S2 = np.zeros(C2.shape, dtype=np.float64)
-    dS2P1 = np.zeros(C2.shape + P1.shape, dtype=np.float64)
+    dS2P1 = np.zeros(P1.shape + C2.shape, dtype=np.float64)
 
     for m in range(M):
       for u in range(C2_height):
@@ -65,6 +65,6 @@ class Convolution3D:
           S2_muv = np.sum(region * self.k2[m]) + self.b2[m]
           C2[m, u, v] = relu(S2_muv)
           dC2S2[m, u, v] = 1 if S2_muv > 0 else 0
-          dS2P1[m, u, v, 0:N, u:(u + k2_height), v:(v + k2_height)] = self.k2[m]
+          dS2P1[0:N, u:(u + k2_height), v:(v + k2_height), m, u, v] = self.k2[m]
 
     return C2, dC2S2, dS2P1

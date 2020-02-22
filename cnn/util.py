@@ -18,6 +18,5 @@ def d_relu(x):
 def softmax(x):
   return np.exp(x) / np.sum(np.exp(x))
 
-def loss(y_preds):
-  losses = -np.log(y_preds)
-  return losses.min(), losses.mean(), losses.max()
+def loss(y_pred):
+  return -np.log(y_pred)

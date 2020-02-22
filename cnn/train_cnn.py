@@ -8,38 +8,29 @@ np.set_printoptions(edgeitems=100, linewidth=200000)
 
 cnn = CNN(6, 12)
 
-# print("INITIAL HYPERPARAMETERS:")
-# print("cnn.k1:")
-# print(cnn.k1)
-# print("cnn.b1:")
-# print(cnn.b1)
-# print("cnn.k2:")
-# print(cnn.k2)
-# print("cnn.b2:")
-# print(cnn.b2)
-# print()
-
 train_images = (mnist.train_images() / 255) - 0.5
 train_labels = mnist.train_labels()
 
 test_images = (mnist.test_images() / 255) - 0.5
 test_labels = mnist.test_labels()
 
-stats = cnn.train(train_images[:1000], train_labels[:1000], test_images[:100], test_labels[:100], 100, 0.005)
+stats = cnn.train(train_images[:5000], train_labels[:5000], test_images[:1000], test_labels[:1000], 10, 0.005)
 epochs = stats[0]
-min_losses = stats[1]
-avg_losses = stats[2]
-max_losses = stats[3]
-accuracies = stats[4]
+avg_losses = stats[1]
+accuracies = stats[2]
 
 with open("model.bin", "wb") as f:
   pickle.dump(cnn, f)
 
-plt.ylabel("Loss")
-plt.xlabel("Epoch")
-plt.plot(epochs, min_losses, label="Min loss")
-plt.plot(epochs, avg_losses, label="Avg loss")
-plt.plot(epochs, max_losses, label="Max loss")
-plt.plot(epochs, accuracies, label="Accuracy")
-plt.legend(loc="center")
+fig = plt.figure()
+plt.subplots_adjust(hspace=0.5)
+
+g1 = fig.add_subplot(2, 1, 1, ylabel="Loss", xlabel="Epoch")
+g1.plot(epochs, avg_losses, label="Avg loss", color="red")
+g1.legend(loc="center")
+
+g2 = fig.add_subplot(2, 1, 2, ylabel="Accuracy", xlabel="Epoch")
+g2.plot(epochs, accuracies, label="Accuracy", color="green")
+g2.legend(loc="center")
+
 plt.show()

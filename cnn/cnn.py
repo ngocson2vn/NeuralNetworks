@@ -10,19 +10,6 @@ class CNN:
     # u1 = math.sqrt(N / ((N + 1) * 5 * 5))
     # u2 = math.sqrt(N / ((N + M) * 5 * 5))
     # u = math.sqrt(N / (M * 16 + 10))
-    # self.k1 = np.random.uniform(low=-u1, high=u1, size=(N, 5, 5))
-    # self.b1 = np.random.uniform(low=-u1, high=u1, size=(N))
-    # self.k2 = np.random.uniform(low=-u2, high=u2, size=(M, N, 5, 5))
-    # self.b2 = np.random.uniform(low=-u1, high=u1, size=(M))
-    # self.w = np.random.uniform(low=-u, high=u, size=(10, M * 16))
-    # self.b = np.random.uniform(low=-u, high=u, size=(10))
-
-    # self.k1 = np.random.randn(N, 5, 5) / 255
-    # self.b1 = np.random.randn(N)
-    # self.k2 = np.random.randn(M, N, 5, 5) / 255
-    # self.b2 = np.random.randn(M)
-    # self.w  = np.random.randn(10, M * 16) / (M * 16)
-    # self.b  = np.random.randn(10)
 
     u1 = 0.1
     u2 = 0.1
@@ -60,21 +47,15 @@ class CNN:
     N = self.k1.shape[0]
     M = self.k2.shape[0]
     epochs = []
-    min_losses = []
     avg_losses = []
-    max_losses = []
     accuracies = []
 
     for ep in range(epoch):
-      # print("-- Epoch {} --".format(ep + 1))
-      count = 0
       # Shuffle the training data
       permutation = np.random.permutation(len(train_images))
       train_images = train_images[permutation]
       train_labels = train_labels[permutation]
       for img, label in zip(train_images, train_labels):
-        count += 1
-        # print("train_image: {}, label: {}".format(count, label))
 
         ############################################################
         # Feed forward                                             #
@@ -121,17 +102,20 @@ class CNN:
         for j in range(f.shape[0]):
           dLf[j] = np.sum(dLS * self.w[:, j])
 
+        dLP2 = dLf.reshape(P2.shape)
+
+
 
         ## 2. Calculate gradients for C2 layer
 
         ### 2.1. Calculate dLC2
         dLC2 = np.zeros(C2.shape, dtype=np.float64)
+
         for m in range(P2.shape[0]):
            for x in range(P2.shape[1]):
              for y in range(P2.shape[2]):
-               k = 16 * m + 4 * x + y
                umax, vmax = I2[m, x, y]
-               dLC2[m, umax, vmax] = dLf[k]
+               dLC2[m, umax, vmax] = dLP2[m, x, y]
 
         ### 2.2. Calculate dLS2
         dLS2 = dLC2 * dC2S2
@@ -147,6 +131,7 @@ class CNN:
                 dLk2[m, n, p, q] = np.sum(dLS2[m] * P1[n][p:(p + C2.shape[1]), q:(q + C2.shape[2])])
 
         
+
         ## 3. Calculate gradients for C1 layer
 
         ### 3.1. Calculate dLP1
@@ -154,7 +139,7 @@ class CNN:
         for n in range(P1.shape[0]):
           for r in range(P1.shape[1]):
             for s in range(P1.shape[2]):
-              dLP1[n, r, s] = np.sum(dLS2 * dS2P1[:, :, :, n, r, s])
+              dLP1[n, r, s] = np.sum(dLS2 * dS2P1[n, r, s])
 
 
         ### 3.2. Calculate dLC1
@@ -188,13 +173,6 @@ class CNN:
         self.w  = self.w  - lr * dLw
         self.b  = self.b  - lr * dLb
 
-        # if count % 100 == 0:
-        #   print("Passed {} steps".format(count))
-        #   losses = []
-        #   for img, label in zip(test_images, test_labels):
-        #     losses.append(-np.log(self.feedforward(img)[label]))
-        #   losses = np.array(losses)
-        #   print("Step: {}, min_loss = {}, avg_loss = {}, max_loss = {}".format(count, losses.min(), losses.mean(), losses.max()))
 
       losses = []
       acc = 0
@@ -203,12 +181,11 @@ class CNN:
         losses.append(-np.log(O[label]))
         acc += 1 if np.argmax(O) == label else 0
       losses = np.array(losses)
+      
       epochs.append(ep)
-      min_losses.append(losses.min())
       avg_losses.append(losses.mean())
-      max_losses.append(losses.max())
       accuracy = 100 * acc / len(test_labels)
       accuracies.append(accuracy)
-      print("Epoch: {}, min_loss = {}, avg_loss = {}, max_loss = {}, accuracy = {:02.2f}%".format(ep + 1, losses.min(), losses.mean(), losses.max(), accuracy))
+      print("Epoch: {}, validate_average_loss: {}, validate_accuracy: {:02.2f}%".format(ep + 1, losses.mean(), accuracy))
 
-    return (epochs, min_losses, avg_losses, max_losses, accuracies)
+    return (epochs, avg_losses, accuracies)
