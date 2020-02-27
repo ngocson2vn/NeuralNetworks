@@ -14,12 +14,12 @@ train_labels = mnist.train_labels()
 test_images = (mnist.test_images() / 255) - 0.5
 test_labels = mnist.test_labels()
 
-stats = cnn.train(train_images[:5000], train_labels[:5000], test_images[:1000], test_labels[:1000], 10, 0.005)
+stats = cnn.train(train_images[:10000], train_labels[:10000], test_images[:1000], test_labels[:1000], 10, 0.005)
 epochs = stats[0]
 avg_losses = stats[1]
 accuracies = stats[2]
 
-with open("model.bin", "wb") as f:
+with open("artifacts/model.bin", "wb") as f:
   pickle.dump(cnn, f)
 
 fig = plt.figure()

@@ -15,7 +15,7 @@ test_labels = mnist.test_labels()
 img = test_images[index]
 label = test_labels[index]
 
-with open("artifacts/model.bin", "rb") as model:
+with open("artifacts/model_full.bin", "rb") as model:
   cnn = pickle.load(model)
 
 fig = plt.figure(figsize=(4, 5))

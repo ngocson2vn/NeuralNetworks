@@ -12,18 +12,11 @@ class MaxPool:
     indices = np.zeros((N, P_height, P_height), dtype=(np.int64, 2))
 
     for n in range(N):
-      # if N == 4:
-      #   print(C[n])
       for i in range(P_height):
         for j in range(P_height):
           region = C[n, (2 * i):(2 * i + 2), (2 * j):(2 * j + 2)]
           P[n, i, j] = np.max(region)
           local_indices = np.unravel_index(np.argmax(region), region.shape)
           indices[n, i, j] = [2 * i + local_indices[0], 2 * j + local_indices[1]]
-          # if N == 4:
-          #   print("layer: {}".format(n))
-          #   print("region[{}, {}:{}, {}:{}]".format(n, (2 * i), (2 * i + 2), (2 * j), (2 * j + 2)))
-          #   print("max value: {}, max indices: {}".format(P[n, i, j], indices[n, i, j]))
-          #   print()
 
     return P, indices

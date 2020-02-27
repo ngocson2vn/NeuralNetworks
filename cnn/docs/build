@@ -1,0 +1,5 @@
+#!/bin/bash
+
+pdflatex notes.tex && pdflatex notes.tex
+open notes.pdf
+

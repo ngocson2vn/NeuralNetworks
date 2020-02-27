@@ -1,0 +1,10 @@
+Epoch: 1, validate_average_loss: 0.21975272097355802, validate_accuracy: 92.60%
+Epoch: 2, validate_average_loss: 0.12023064924979249, validate_accuracy: 96.60%
+Epoch: 3, validate_average_loss: 0.08324938936477308, validate_accuracy: 96.90%
+Epoch: 4, validate_average_loss: 0.11886395613170263, validate_accuracy: 96.50%
+Epoch: 5, validate_average_loss: 0.12090886461215948, validate_accuracy: 96.10%
+Epoch: 6, validate_average_loss: 0.09011801069693898, validate_accuracy: 96.80%
+Epoch: 7, validate_average_loss: 0.09669009218675029, validate_accuracy: 97.00%
+Epoch: 8, validate_average_loss: 0.09173558774169109, validate_accuracy: 97.20%
+Epoch: 9, validate_average_loss: 0.08829789823772816, validate_accuracy: 97.40%
+Epoch: 10, validate_average_loss: 0.07436090860825195, validate_accuracy: 98.10%

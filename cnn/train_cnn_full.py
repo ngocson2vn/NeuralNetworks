@@ -19,7 +19,7 @@ epochs = stats[0]
 avg_losses = stats[1]
 accuracies = stats[2]
 
-with open("model.bin", "wb") as f:
+with open("artifacts/model_full.bin", "wb") as f:
   pickle.dump(cnn, f)
 
 fig = plt.figure()

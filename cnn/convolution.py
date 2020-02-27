@@ -4,8 +4,8 @@ from util import relu
 class Convolution2D:
   def __init__(self, k1, b1, stride=1, padding=0):
     """
-      - k: (6, 5, 5) kernels
-      - b: (6) bias
+      - k1: (6, 5, 5) kernels
+      - b1: (6) bias
     """
     self.k1 = k1
     self.b1 = b1
@@ -39,8 +39,8 @@ class Convolution2D:
 class Convolution3D:
   def __init__(self, k2, b2, stride=1, padding=0):
     """
-      - k:   (12, 6, 5, 5) kernels
-      - b:   (12) bias
+      - k2:   (12, 6, 5, 5) kernels
+      - b2:   (12) bias
     """
     self.k2 = k2
     self.b2 = b2

@@ -7,41 +7,39 @@ from pooling import MaxPool
 
 class CNN:
   def __init__(self, N, M):
-    # u1 = math.sqrt(N / ((N + 1) * 5 * 5))
-    # u2 = math.sqrt(N / ((N + M) * 5 * 5))
-    # u = math.sqrt(N / (M * 16 + 10))
-
     u1 = 0.1
     u2 = 0.1
     u = 0.1
     self.k1 = np.random.uniform(low=-u1, high=u1, size=(N, 5, 5))
     self.b1 = np.random.uniform(low=-u1, high=u1, size=(N))
     self.k2 = np.random.uniform(low=-u2, high=u2, size=(M, N, 5, 5))
-    self.b2 = np.random.uniform(low=-u1, high=u1, size=(M))
+    self.b2 = np.random.uniform(low=-u2, high=u2, size=(M))
     self.w = np.random.uniform(low=-u, high=u, size=(10, M * 16))
     self.b = np.random.uniform(low=-u, high=u, size=(10))
+
 
   def feedforward(self, img):
     ## Convolution Layer C1
     conv1 = Convolution2D(self.k1, self.b1, stride=1, padding=0)
-    C1, _ = conv1.feedforward(img)
+    C1, dC1S1 = conv1.feedforward(img)
 
     ## Pooling Layer P1
     maxpool = MaxPool(size=2)
-    P1, _ = maxpool.feedforward(C1)
+    P1, I1 = maxpool.feedforward(C1)
 
     ## Convolution Layer C2
     conv2 = Convolution3D(self.k2, self.b2, stride=1, padding=0)
-    C2, _, _ = conv2.feedforward(P1)
+    C2, dC2S2, dS2P1 = conv2.feedforward(P1)
 
     ## Pooling Layer P2
-    P2, _ = maxpool.feedforward(C2)
+    P2, I2 = maxpool.feedforward(C2)
 
     ## FC Layer
     f = P2.flatten()
     O = softmax(np.dot(self.w, f) + self.b)
 
     return O
+
 
   def train(self, train_images, train_labels, test_images, test_labels, epoch, lr):
     N = self.k1.shape[0]
@@ -58,7 +56,7 @@ class CNN:
       for img, label in zip(train_images, train_labels):
 
         ############################################################
-        # Feed forward                                             #
+        # Feedforward phase                                        #
         ############################################################
 
         ## Convolution Layer C1
@@ -72,7 +70,6 @@ class CNN:
         ## Convolution Layer C2
         conv2 = Convolution3D(self.k2, self.b2, stride=1, padding=0)
         C2, dC2S2, dS2P1 = conv2.feedforward(P1)
-        # print(C2[0])
 
         ## Pooling Layer P2
         P2, I2 = maxpool.feedforward(C2)
@@ -80,15 +77,13 @@ class CNN:
         ## FC Layer
         f = P2.flatten()
         O = softmax(np.dot(self.w, f) + self.b)
-        # print(O, label)
-        # print()
 
 
         ############################################################
-        # Back propagation                                         #
+        # Backpropagation phase                                    #
         ############################################################
 
-        ## 1. Calculate gradients for FC layer
+        ## 1. Calculate gradients of parameters in the FC layer
         dLS = np.copy(O)
         dLS[label] = O[label] - 1
         dLb = np.copy(dLS)
@@ -106,7 +101,7 @@ class CNN:
 
 
 
-        ## 2. Calculate gradients for C2 layer
+        ## 2. Calculate gradients of parameters in the C2 layer
 
         ### 2.1. Calculate dLC2
         dLC2 = np.zeros(C2.shape, dtype=np.float64)
@@ -132,7 +127,7 @@ class CNN:
 
         
 
-        ## 3. Calculate gradients for C1 layer
+        ## 3. Calculate gradients of parameters in the C1 layer
 
         ### 3.1. Calculate dLP1
         dLP1 = np.zeros(P1.shape, dtype=np.float64)
@@ -163,7 +158,7 @@ class CNN:
               dLk1[n, g, h] = np.sum(dLS1[n] * img[g:(g + C1.shape[1]), h:(h + C1.shape[2])])
 
 
-        ## 4. Update kernels and biases
+        ## 4. Update parameters
         self.k1 = self.k1 - lr * dLk1
         self.b1 = self.b1 - lr * dLb1
 
@@ -182,7 +177,7 @@ class CNN:
         acc += 1 if np.argmax(O) == label else 0
       losses = np.array(losses)
       
-      epochs.append(ep)
+      epochs.append(ep + 1)
       avg_losses.append(losses.mean())
       accuracy = 100 * acc / len(test_labels)
       accuracies.append(accuracy)
